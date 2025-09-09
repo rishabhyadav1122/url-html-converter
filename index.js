@@ -26,8 +26,14 @@ export async function urlToHtml(url, type = "static") {
     else if (type.toLowerCase() === "dynamic") {
       // Use puppeteer for dynamic rendering
       const browser = await puppeteer.launch({
-        headless: "new",
-      });
+  headless: true,
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu'
+  ]
+});
       const page = await browser.newPage();
       await page.goto(url, { waitUntil: "networkidle2" });
 
