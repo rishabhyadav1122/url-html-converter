@@ -7,7 +7,7 @@ const port = 3000;
 
 
 app.get('/scrape', async (req, res) => {
-  const { url, type  } = req.query;
+  const { url, type } = req.query;
 
  
 

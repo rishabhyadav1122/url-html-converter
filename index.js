@@ -35,7 +35,10 @@ export async function urlToHtml(url, type = "static") {
   ]
 });
       const page = await browser.newPage();
-    await page.goto(url, { waitUntil: ["load", "domcontentloaded", "networkidle0"] });
+await page.goto(url, { waitUntil: "networkidle0" });
+await page.waitForSelector(".col-3.align-self-center");  // waits until cars are loaded
+
+
 
       const html = await page.content();
       await browser.close();
