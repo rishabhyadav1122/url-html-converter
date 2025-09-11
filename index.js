@@ -42,40 +42,40 @@ export async function urlToHtml(url, type = "static") {
       const page = await browser.newPage();
 
       // Helper to wait until HTML stops changing
-      async function waitForStableContent(page, timeout = 30000, checkInterval = 1000) {
-        let lastHTMLSize = 0;
-        let stableCount = 0;
-        const maxStableCount = 3;
-        const start = Date.now();
+   // Helper: wait until page HTML stops changing
+async function waitForStableContent(page, timeout = 45000, checkInterval = 1000) {
+  let lastHTMLSize = 0;
+  let stableCount = 0;
+  const maxStableCount = 3;
+  const start = Date.now();
 
-        while (Date.now() - start < timeout) {
-          let html = await page.content();
-          let currentSize = html.length;
+  while (Date.now() - start < timeout) {
+    let html = await page.content();
+    let currentSize = html.length;
 
-          if (lastHTMLSize !== 0 && currentSize === lastHTMLSize) {
-            stableCount++;
-          } else {
-            stableCount = 0;
-          }
+    if (lastHTMLSize !== 0 && currentSize === lastHTMLSize) {
+      stableCount++;
+    } else {
+      stableCount = 0;
+    }
 
-          if (stableCount >= maxStableCount) {
-            break; // page is stable
-          }
+    if (stableCount >= maxStableCount) {
+      console.log("✅ Page content stabilized");
+      break;
+    }
 
-          lastHTMLSize = currentSize;
-          await new Promise((res) => setTimeout(res, checkInterval));
-        }
-      }
+    lastHTMLSize = currentSize;
+    await new Promise((res) => setTimeout(res, checkInterval));
+  }
+}
 
-      // Navigate to URL
-      await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+await page.setDefaultNavigationTimeout(0); // disable default timeout
+await page.goto(url, { waitUntil: "domcontentloaded" }); // faster than networkidle2
+await page.waitForTimeout(5000); // give JS some time to kick in
+await waitForStableContent(page, 45000); // wait until cars appear
 
-      // Wait until content stabilizes
-      await waitForStableContent(page, 30000);
-
-      // Grab HTML
-      const html = await page.content();
-      console.log("HTML length:", html.length);
+const html = await page.content();
+console.log("HTML length:", html.length);
 
       // Debug: take screenshot to confirm if cars are visible
       await page.screenshot({ path: "debug.png", fullPage: true });
