@@ -35,7 +35,7 @@ export async function urlToHtml(url, type = "static") {
   ]
 });
       const page = await browser.newPage();
-await page.goto(url, { waitUntil: "networkidle0" });
+await page.goto(url, { waitUntil: "networkidle0" ,timeout: 60000  });
 
 await new Promise(resolve => setTimeout(resolve, 15000));
 
