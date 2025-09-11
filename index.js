@@ -80,7 +80,7 @@ export async function urlToHtml(url, type = "static") {
       // Debug: take screenshot to confirm if cars are visible
       await page.screenshot({ path: "debug.png", fullPage: true });
 
-      await browser.close();
+      await browser.close();  
       return html;
     }
 
