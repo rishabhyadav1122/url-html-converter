@@ -18,7 +18,7 @@ app.get('/scrape', async (req, res) => {
   try {
     const html = await urlToHtml(url, type);
     const len=html.length;
-   res.send(html);
+   res.json({url,type,len,html});
 
   } catch (err) {
     res.status(500).json({ error: err.message });

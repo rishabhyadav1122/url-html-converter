@@ -77,8 +77,7 @@ await waitForStableContent(page, 45000); // wait until cars appear
 const html = await page.content();
 console.log("HTML length:", html.length);
 
-      // Debug: take screenshot to confirm if cars are visible
-      await page.screenshot({ path: "debug.png", fullPage: true });
+
 
       await browser.close();  
       return html;
