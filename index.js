@@ -71,7 +71,7 @@ async function waitForStableContent(page, timeout = 45000, checkInterval = 1000)
 
 await page.setDefaultNavigationTimeout(0); // disable default timeout
 await page.goto(url, { waitUntil: "domcontentloaded" }); // faster than networkidle2
-await page.waitForTimeout(5000); // give JS some time to kick in
+await new Promise(res => setTimeout(res, 5000));
 await waitForStableContent(page, 45000); // wait until cars appear
 
 const html = await page.content();
