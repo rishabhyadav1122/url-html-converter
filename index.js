@@ -35,15 +35,40 @@ export async function urlToHtml(url, type = "static") {
   ]
 });
       const page = await browser.newPage();
-await page.goto(url, { waitUntil: "networkidle0" ,timeout: 60000  });
+      async function waitForStableContent(page, timeout = 30000, checkInterval = 1000) {
+  let lastHTMLSize = 0;
+  let stableCount = 0;
+  const maxStableCount = 3;
+  const start = Date.now();
 
-await new Promise(resolve => setTimeout(resolve, 15000));
+  while (Date.now() - start < timeout) {
+    let html = await page.content();
+    let currentSize = html.length;
+
+    if (lastHTMLSize !== 0 && currentSize === lastHTMLSize) {
+      stableCount++;
+    } else {
+      stableCount = 0;
+    }
+
+    if (stableCount >= maxStableCount) {
+      break; // page is stable
+    }
+
+    lastHTMLSize = currentSize;
+    await new Promise(res => setTimeout(res, checkInterval));
+  }
+}
+
+await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+await waitForStableContent(page, 30000); // waits until page stops changing
+const html = await page.content();
+console.log("HTML length:", html.length);
 
 
 
 
 
-      const html = await page.content();
       await browser.close();
 
       return html;
