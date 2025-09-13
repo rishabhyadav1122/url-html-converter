@@ -41,38 +41,10 @@ export async function urlToHtml(url, type = "static") {
 
       const page = await browser.newPage();
 
-      // Helper to wait until HTML stops changing
-   // Helper: wait until page HTML stops changing
-async function waitForStableContent(page, timeout = 45000, checkInterval = 1000) {
-  let lastHTMLSize = 0;
-  let stableCount = 0;
-  const maxStableCount = 3;
-  const start = Date.now();
 
-  while (Date.now() - start < timeout) {
-    let html = await page.content();
-    let currentSize = html.length;
 
-    if (lastHTMLSize !== 0 && currentSize === lastHTMLSize) {
-      stableCount++;
-    } else {
-      stableCount = 0;
-    }
-
-    if (stableCount >= maxStableCount) {
-      console.log("✅ Page content stabilized");
-      break;
-    }
-
-    lastHTMLSize = currentSize;
-    await new Promise((res) => setTimeout(res, checkInterval));
-  }
-}
-
-await page.setDefaultNavigationTimeout(0); // disable default timeout
-await page.goto(url, { waitUntil: "domcontentloaded" }); // faster than networkidle2
+await page.goto(url, { waitUntil: "domcontentloaded" });
 await new Promise(res => setTimeout(res, 5000));
-await waitForStableContent(page, 45000); // wait until cars appear
 
 const html = await page.content();
 console.log("HTML length:", html.length);

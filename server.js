@@ -4,6 +4,9 @@ import { urlToHtml } from './index.js';
 const app = express();
 const port = 3000;
 
+app.get('/',async(req,res)=>{
+  res.send("hello");
+})
 app.get('/scrape', async (req, res) => {
   const { url, type } = req.query;
 
